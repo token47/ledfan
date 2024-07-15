@@ -1,0 +1,311 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface version="1.4" author="PygubuDesigner 0.39.3">
+  <project>
+    <settings>
+      <setting id="name">App Graphical Client</setting>
+      <setting id="description">Graphical application for led fans</setting>
+      <setting id="module_name">app</setting>
+      <setting id="template">codescript</setting>
+      <setting id="main_widget">toplevel</setting>
+      <setting id="main_classname">app</setting>
+      <setting id="main_menu" />
+      <setting id="output_dir" />
+      <setting id="output_dir2" />
+      <setting id="import_tkvariables">False</setting>
+      <setting id="use_ttk_styledefinition_file">False</setting>
+      <setting id="use_i18n">False</setting>
+      <setting id="all_ids_attributes">False</setting>
+      <setting id="generate_code_onsave">False</setting>
+      <setting id="use_window_centering_code">False</setting>
+      <setting id="ttk_style_definition_file" />
+    </settings>
+    <customwidgets />
+  </project>
+  <object class="tk.Toplevel" id="toplevel" named="True">
+    <property name="height">200</property>
+    <property name="iconphoto">./app.png</property>
+    <property name="resizable">none</property>
+    <property name="title" translatable="yes">Led Fan Controller App</property>
+    <property name="width">200</property>
+    <bind sequence="&lt;KeyPress&gt;" handler="cb_key_pressed" add="" />
+    <child>
+      <object class="ttk.Frame" id="frame_main" named="True">
+        <property name="borderwidth">1</property>
+        <property name="height">200</property>
+        <property name="padding">5</property>
+        <property name="width">200</property>
+        <layout manager="pack">
+          <property name="side">top</property>
+        </layout>
+        <child>
+          <object class="ttk.Label" id="label1">
+            <property name="font">{Ubuntu} 12 {bold}</property>
+            <property name="text" translatable="yes">Led-Fan Hologram Control App For Linux</property>
+            <layout manager="pack">
+              <property name="pady">0 5</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Frame" id="frame_main_sub" named="True">
+            <property name="borderwidth">1</property>
+            <property name="height">200</property>
+            <property name="width">200</property>
+            <layout manager="pack">
+              <property name="side">top</property>
+            </layout>
+            <child>
+              <object class="ttk.Frame" id="frame_left" named="True">
+                <property name="borderwidth">1</property>
+                <property name="height">200</property>
+                <property name="width">200</property>
+                <layout manager="pack">
+                  <property name="fill">both</property>
+                  <property name="side">left</property>
+                </layout>
+                <child>
+                  <object class="ttk.Frame" id="frame_buttons_top" named="True">
+                    <property name="height">200</property>
+                    <property name="width">200</property>
+                    <layout manager="pack">
+                      <property name="pady">0 10</property>
+                      <property name="side">top</property>
+                    </layout>
+                    <child>
+                      <object class="ttk.Button" id="button_lastone" named="True">
+                        <property name="command" type="command" cbtype="simple">cb_button_lastone_clicked</property>
+                        <property name="cursor">arrow</property>
+                        <property name="state">normal</property>
+                        <property name="takefocus">false</property>
+                        <property name="text" translatable="yes">Last one</property>
+                        <property name="width">10</property>
+                        <layout manager="pack">
+                          <property name="padx">0 3</property>
+                          <property name="side">left</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="button_singleloop" named="True">
+                        <property name="command" type="command" cbtype="simple">cb_button_singleloop_clicked</property>
+                        <property name="text" translatable="yes">Single loop</property>
+                        <property name="width">10</property>
+                        <layout manager="pack">
+                          <property name="padx">3</property>
+                          <property name="side">left</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="button_playpause" named="True">
+                        <property name="command" type="command" cbtype="simple">cb_button_playpause_clicked</property>
+                        <property name="text" translatable="yes">Play/Pause</property>
+                        <property name="width">10</property>
+                        <layout manager="pack">
+                          <property name="padx">3</property>
+                          <property name="side">left</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="button_listloop" named="True">
+                        <property name="command" type="command" cbtype="simple">cb_button_listloop_clicked</property>
+                        <property name="text" translatable="yes">List loop</property>
+                        <property name="width">10</property>
+                        <layout manager="pack">
+                          <property name="padx">3</property>
+                          <property name="side">left</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="button_nextone" named="True">
+                        <property name="command" type="command" cbtype="simple">cb_button_nextone_clicked</property>
+                        <property name="text" translatable="yes">Next one</property>
+                        <property name="width">10</property>
+                        <layout manager="pack">
+                          <property name="padx">3 0</property>
+                          <property name="side">left</property>
+                        </layout>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Treeview" id="treeview" named="True">
+                    <property name="height">25</property>
+                    <property name="selectmode">extended</property>
+                    <layout manager="pack">
+                      <property name="expand">false</property>
+                      <property name="fill">both</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Frame" id="frame_buttons_right" named="True">
+                <layout manager="pack">
+                  <property name="padx">10 0</property>
+                  <property name="side">top</property>
+                </layout>
+                <child>
+                  <object class="ttk.Label" id="label_connected" named="True">
+                    <property name="anchor">center</property>
+                    <property name="background">#333333</property>
+                    <property name="font">{Ubuntu Mono} 12 {}</property>
+                    <property name="foreground">#ffffff</property>
+                    <property name="padding">0</property>
+                    <property name="text" translatable="yes">disconnected</property>
+                    <property name="width">13</property>
+                    <layout manager="pack">
+                      <property name="ipadx">2</property>
+                      <property name="ipady">5</property>
+                      <property name="pady">0 10</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Button" id="button_disconnect" named="True">
+                    <property name="command" type="command" cbtype="simple">cb_button_disconnect_clicked</property>
+                    <property name="text" translatable="yes">Disconnect</property>
+                    <property name="width">12</property>
+                    <layout manager="pack">
+                      <property name="pady">0 3</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Button" id="button_connect" named="True">
+                    <property name="command" type="command" cbtype="simple">cb_button_connect_clicked</property>
+                    <property name="text" translatable="yes">Connect</property>
+                    <property name="width">12</property>
+                    <layout manager="pack">
+                      <property name="pady">3</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Button" id="button_onoff" named="True">
+                    <property name="command" type="command" cbtype="simple">cb_button_onoff_clicked</property>
+                    <property name="text" translatable="yes">On/Off</property>
+                    <property name="width">12</property>
+                    <layout manager="pack">
+                      <property name="pady">3</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Button" id="button_format" named="True">
+                    <property name="command" type="command" cbtype="simple">cb_button_format_clicked</property>
+                    <property name="text" translatable="yes">Format Disk</property>
+                    <property name="width">12</property>
+                    <layout manager="pack">
+                      <property name="pady">3</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Button" id="button_upload" named="True">
+                    <property name="command" type="command" cbtype="simple">cb_button_upload_clicked</property>
+                    <property name="text" translatable="yes">Upload file(s)</property>
+                    <property name="width">12</property>
+                    <layout manager="pack">
+                      <property name="pady">3</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Button" id="button_brighplus" named="True">
+                    <property name="command" type="command" cbtype="simple">cb_button_brighplus_clicked</property>
+                    <property name="default">normal</property>
+                    <property name="text" translatable="yes">Brightness+</property>
+                    <property name="width">12</property>
+                    <layout manager="pack">
+                      <property name="pady">3</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Button" id="button_brighminus" named="True">
+                    <property name="command" type="command" cbtype="simple">cb_button_brighminus_clicked</property>
+                    <property name="text" translatable="yes">Brightness-</property>
+                    <property name="width">12</property>
+                    <layout manager="pack">
+                      <property name="pady">3</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Button" id="button_cwadjust" named="True">
+                    <property name="command" type="command" cbtype="simple">cb_button_cwadjust_clicked</property>
+                    <property name="text" translatable="yes">CW adjust</property>
+                    <property name="width">12</property>
+                    <layout manager="pack">
+                      <property name="pady">3</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Button" id="button_ccwadjust" named="True">
+                    <property name="command" type="command" cbtype="simple">cb_button_ccwadjust_clicked</property>
+                    <property name="text" translatable="yes">CCW adjust</property>
+                    <property name="width">12</property>
+                    <layout manager="pack">
+                      <property name="pady">3 0</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Button" id="button_play" named="True">
+                    <property name="command" type="command" cbtype="simple">cb_button_play_clicked</property>
+                    <property name="text" translatable="yes">Play</property>
+                    <property name="width">12</property>
+                    <layout manager="pack">
+                      <property name="pady">25 0</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Button" id="button_delete" named="True">
+                    <property name="command" type="command" cbtype="simple">cb_button_delete_clicked</property>
+                    <property name="text" translatable="yes">Delete</property>
+                    <property name="width">12</property>
+                    <layout manager="pack">
+                      <property name="pady">20 0</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Button" id="button_quit" named="True">
+                    <property name="command" type="command" cbtype="simple">cb_button_quit_clicked</property>
+                    <property name="text" translatable="yes">Quit</property>
+                    <property name="width">12</property>
+                    <layout manager="pack">
+                      <property name="pady">90 0</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
