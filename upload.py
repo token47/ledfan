@@ -5,4 +5,4 @@ import network
 x = network.LedFanNetwork()
 
 x.connect()
-x.send_upload_file("./y.BIN")
+x.send_upload_file("./test2.BIN")

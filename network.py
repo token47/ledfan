@@ -3,6 +3,7 @@
 import os
 import re
 import socket
+import time
 
 from select import select
 
@@ -26,15 +27,16 @@ XMITCODE = {
     "brigh+": b"\x00\x63\x63\x6d", # 00 63 63 6d .ccm
     "rotcw":  b"\x00\x63\x63\x70", # 00 63 63 70 .ccp
     "rotccw": b"\x00\x63\x63\x71", # 00 63 63 71 .ccq
-    "upload": b"\x00\x6b\x65",     # 00 6b 65    .ke
+    "upload": b"\x00\x6e\x63",     # 00 6e 63    .mc
     #"????":  b"\x00\x63\x67\x62\x93\xe3\x00\x00" # 00 63 67 62 93 e3 00 00 .cgb....
     }
 
 RECVCODE = {
-    "filelist":   b"\x00\x6d\x6e\x69", # 00 6d 6e 69 .mni
-    "filelist2":  b"\x00\x6d\x70\x69", # 00 6d 70 69 .mpi
-    "filelist3":  b"\x00\x6e\x66\x69", # 00 6e 66 69 .nfi
-    "uploadconf": b"\x00\x6b\x65",     # 00 6b 65    .ke
+    "filelist":   b"\x00\x6d\x6e\x69",     # 00 6d 6e 69    .mni
+    "filelist2":  b"\x00\x6d\x70\x69",     # 00 6d 70 69    .mpi
+    "filelist3":  b"\x00\x6e\x66\x69",     # 00 6e 66 69    .nfi
+    "filelist4":  b"\x00\x6e\x63\x69",     # 00 6e 63 69    .nci
+    "uploadconf": b"\x00\x6b\x65",         # 00 6b 65       .ke
     }
 
 FRAME_RE = re.compile(
@@ -123,6 +125,10 @@ class LedFanNetwork:
             print("RECV CODE: filelist3")
             args = pktbytes[len(RECVCODE["filelist3"]):]
             self.recv_filelist(args)
+        elif pktbytes.startswith(RECVCODE["filelist4"]):
+            print("RECV CODE: filelist4")
+            args = pktbytes[len(RECVCODE["filelist4"]):]
+            self.recv_filelist(args)
         elif pktbytes.startswith(RECVCODE["uploadconf"]):
             print("RECV CODE: uploadconf")
             args = pktbytes[len(RECVCODE["uploadconf"]):]
@@ -146,7 +152,7 @@ class LedFanNetwork:
 
 
     def recv_uploadconf(self, buffer):
-        print(f"DEBUG: Not implemented, got {buffer}")
+        print(f"DEBUG: Not implemented, got uploadconf + {buffer}")
 
 
     def send_cmd(self, cmd, arg=None):
@@ -166,7 +172,8 @@ class LedFanNetwork:
         filename = os.path.basename(filepath)
         self._sock_send(FRAME["upload"]+FRAME["end"])
         self._sock_send(FRAME["upload"]+XMITCODE["upload"]+filename.encode()+FRAME["end"])
-        # now a packet will come back, consume it just in case
+        time.sleep(0.5)
+        # a packet will come back, consume it just in case
         self.process_packets()
         # then send actual file data
         self._sock_send(filedata)

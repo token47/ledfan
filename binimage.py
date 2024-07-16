@@ -51,8 +51,16 @@ DECODE_BITS = ( # 0,1,2 == R,G,B
 
 INFO = {
     "G224-42": {
-        "radius": 112,
+        "radius": 112, # 2 blades make 224 total, 112 each side
         "theta": 3072,
+        "center_attenuation": {
+            # how many pixels to turn off, each 25 pixels
+            0: 23, # 2/25 on
+            1: 20, # 5/25 on
+            2: 16, # 9/25 on
+            3: 13, # 12/25 on
+            4:  3, # 22/25 on
+            }
         },
     }
 
@@ -64,6 +72,7 @@ class LedFanBinImage():
     # From info array
     size_radius = None
     size_theta = None
+    center_att = None
     # Calculated
     size_radius_packed = None
     frame_size = None
@@ -77,6 +86,7 @@ class LedFanBinImage():
         self.model = model
         self.size_radius = INFO[model]["radius"]
         self.size_theta = INFO[model]["theta"]
+        self.center_att = INFO[model]["center_attenuation"]
         self.size_radius_packed = int(self.size_radius * 3 / 8)
         self.frame_size = self.size_theta * self.size_radius_packed
 
@@ -94,7 +104,7 @@ class LedFanBinImage():
     def export_bin_movie(self, filename=None):
         # it can be a string (will save as a file) or it will be returned by function
         if filename:
-            open(filename, "wb").save(self.bin_movie)
+            open(filename, "wb").write(self.bin_movie)
         else:
             return self.bin_movie
 
@@ -135,24 +145,53 @@ class LedFanBinImage():
         self.bin_movie = b""
         for frame_num in range(self.total_frames):
             print(f" {frame_num}", end="", flush=True)
+            self.attenuate_center_radiuses(self.numpy_movie[frame_num]) # in place
             frame = self._encode_frame(self.numpy_movie[frame_num])
             self.bin_movie += frame
+        print()
 
 
     def _encode_frame(self, numpy_frame):
-        pass
+        # this is broken, find the issue and fix
+        bin_frame_temp = bytearray()
+        for line_count in range(self.size_theta):
+            column_count = [ 0, 0, 0 ] # accumulators for RGB bit pos
+            for i in range(0, self.size_radius * 3, 8):
+                byte = 0
+                for j in range(8):
+                    dest_color = int(DECODE_BITS[i+j])
+                    o = numpy_frame[line_count][column_count[dest_color]][dest_color]
+                    v = 1 if o >= 128 else 0
+                    byte += v << (7-j)
+                    column_count[dest_color] += 1
+                bin_frame_temp.extend(byte.to_bytes(1, byteorder="little"))
+        return bin_frame_temp
 
 
     # import and export the numpy (array of) images
 
-    def import_numpy_movie(self, data):
-        #self.total_frames = int(len(self.bin_movie) / self.frame_size)
-        pass
+    def import_numpy_movie(self, numpy_movie):
+        self.numpy_movie = numpy_movie
+        self.total_frames, shape_t, shape_r, shape_c = numpy_movie.shape
+        print(f"importing numpy movie with {self.total_frames} frames, "
+            f"{shape_t}:{shape_r}:{shape_c} resolution")
 
 
     def export_numpy_movie(self):
-        #return data
-        pass
+        return self.numpy_movie
+
+
+    def attenuate_center_radiuses(self, numpy_frame):
+        # implement a better interleaving
+        return
+        for r in range(len(self.center_att)):
+            for t1 in range(0, self.size_theta, 25):
+                for t2 in range(0, self.center_att[r]):
+                    t = t1 + t2
+                    if t < self.size_theta:
+                        numpy_frame[t][self.size_radius-r-1][0] = 0
+                        numpy_frame[t][self.size_radius-r-1][1] = 0
+                        numpy_frame[t][self.size_radius-r-1][2] = 0
 
 
     # more specialized ways of getting images
@@ -160,12 +199,13 @@ class LedFanBinImage():
     def get_numpy_frame(self, frame_num, rotated=0):
         if frame_num > self.total_frames:
             raise Exception(f"Frames must be <= {self.total_frames}")
+        # no rotation by default
         return np.rot90(self.numpy_movie[frame_num], k=rotated, axes=(0,1))
 
 
     def get_numpy_frame_cartesian(self, frame_num):
         image_cart, _ = polarTransform.convertToCartesianImage(
-            self.get_image_frame(frame_num),
+            self.get_numpy_frame(frame_num),
             initialAngle=np.pi*0.5,
             finalAngle=np.pi*2.5,
             hasColor=True)

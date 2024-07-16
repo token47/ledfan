@@ -162,4 +162,5 @@ cython_debug/
 #.idea/
 
 /App_V13.0
-
+*.bin
+*.BIN
